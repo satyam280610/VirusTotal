@@ -5,7 +5,7 @@ import os
 import botfunctions
 import threading
 import time
-
+from telegraph import Telegraph
 
 # bot
 bot_token = os.environ.get("TOKEN", "") 
@@ -13,7 +13,8 @@ api_hash = os.environ.get("HASH", "")
 api_id = os.environ.get("ID", "")
 app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)
 MAXSIZE = 681574400
-
+telegraph = Telegraph()
+telegraph.create_account(short_name='VirusTotal')
 
 # start command
 @app.on_message(filters.command(["start"]))
@@ -87,10 +88,13 @@ def checkvirus(message):
         print("Function returned None")
         return
 
+    response = telegraph.create_page('VT',content=[f'{maintext}-|-{checktext}-|-{signatures}-|-{link}'])
+    tlink = response['url']
+
     app.edit_message_text(message.chat.id, msg.id, maintext,
             reply_markup=InlineKeyboardMarkup([[  
-                                                    InlineKeyboardButton( "🧪 Detections", callback_data="🧪 Detections" ),
-                                                    InlineKeyboardButton( "🌡 Signatures", callback_data="🌡 Signatures" ),
+                                                    InlineKeyboardButton( "🧪 Detections", callback_data=f"D|{tlink}"),
+                                                    InlineKeyboardButton( "🌡 Signatures", callback_data=f"S|{tlink}"),
                                               ],
                                               [
                                                 InlineKeyboardButton( "🔗 View on VirusTotal", url=link )
@@ -110,38 +114,44 @@ def docu(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 # call back functon
 @app.on_callback_query()
 def callbck(client: pyrogram.client.Client, message: pyrogram.types.CallbackQuery):
-    hash = message.message.reply_markup.inline_keyboard[1][0].url[-64:]
-    action = message.data
-    maintext, checktext, signatures,link = botfunctions.cleaninfo(hash)
+    url = message.message.reply_markup.inline_keyboard[1][0].url
+    datas = message.data.split("|")
+    action = datas[0]
+    tlink = datas[1]
+    res = telegraph.get_page(tlink.split("https://telegra.ph/")[1], return_content=True, return_html=False)
+    result = res["content"][0].split("-|-")
+    maintext = result[0]
+    checktext = result[1]
+    signatures = result[2]
 
-    if action == "🔙 Back":
+    if action == "B":
         app.edit_message_text(message.message.chat.id, message.message.id, maintext,
                 reply_markup=InlineKeyboardMarkup([[  
-                                                        InlineKeyboardButton( "🧪 Detections", callback_data="🧪 Detections" ),
-                                                        InlineKeyboardButton( "🌡 Signatures", callback_data="🌡 Signatures" )
+                                                        InlineKeyboardButton( "🧪 Detections", callback_data=f"D|{tlink}"),
+                                                        InlineKeyboardButton( "🌡 Signatures", callback_data=f"S|{tlink}")
                                                 ],
                                                 [
-                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=link )
+                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=url )
                                                 ]]))
 
-    if action == "🧪 Detections":
+    if action == "D":
         app.edit_message_text(message.message.chat.id, message.message.id, checktext,
                 reply_markup=InlineKeyboardMarkup([[  
-                                                        InlineKeyboardButton( "🔙 Back", callback_data="🔙 Back" ),
-                                                        InlineKeyboardButton( "🌡 Signatures", callback_data="🌡 Signatures" ),
+                                                        InlineKeyboardButton( "🔙 Back", callback_data=f"B|{tlink}"),
+                                                        InlineKeyboardButton( "🌡 Signatures", callback_data=f"S|{tlink}"),
                                                 ],
                                                 [
-                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=link )
+                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=url )
                                                 ]]))
 
-    if action == "🌡 Signatures":
+    if action == "S":
         app.edit_message_text(message.message.chat.id, message.message.id, signatures,
                 reply_markup=InlineKeyboardMarkup([[  
-                                                        InlineKeyboardButton( "🔙 Back", callback_data="🔙 Back" ),
-                                                        InlineKeyboardButton( "🧪 Detections", callback_data="🧪 Detections" )
+                                                        InlineKeyboardButton( "🔙 Back", callback_data=f"B|{tlink}"),
+                                                        InlineKeyboardButton( "🧪 Detections", callback_data=f"D|{tlink}")
                                                 ],
                                                 [
-                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=link )
+                                                InlineKeyboardButton( "🔗 View on VirusTotal", url=url )
                                                 ]]))
 	           
     
