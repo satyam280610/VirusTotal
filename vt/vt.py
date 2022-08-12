@@ -2,10 +2,13 @@ import requests
 import hashlib
 from vt.core.funtions import *
 import urllib.parse
+from fp.fp import FreeProxy
 
 class Virustotal:
     def __init__(self):
         self.session = requests.Session()
+        proxy = FreeProxy().get()
+        self.session.proxies = {proxy}
         self.update_headers()
 
 
