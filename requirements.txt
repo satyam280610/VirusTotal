@@ -3,3 +3,4 @@ rich==12.4.4
 pyrogram 
 tgcrypto
 pydantic
+free-proxy
