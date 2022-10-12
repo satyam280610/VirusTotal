@@ -2,7 +2,7 @@
 
 a Telegram Bot to check file in [VirusTotal](http://virustotal.com/) with over 70 different antiviruses.
 
-Inspired from https://github.com/Brijeshkrishna/virustotal-scrapper
+Inspired from https://github.com/satyam280610/VirusTotal
 
 ---
 
