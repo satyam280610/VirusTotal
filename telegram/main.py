@@ -21,11 +21,11 @@ telegraph.create_account(short_name='VirusTotal')
 def strt(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
 
     START = f'👋🏻 Hello! {message.from_user.mention}\
-    \nI am a Bot based on **[VT-SCRAP](https://github.com/Brijeshkrishna/virustotal-scrapper)**\
+    \nI am a Bot based on **[Rdx](https://github.com/satyam280610/VirusTotal)**\
 \
     \n\n__• You can send the file to the bot or forward it from another channel, and it will check file to **[VirusTotal](http://virustotal.com/)** with over **70** different antiviruses.\
 \
-    \n\n• To get scan results - send me any a file up to **650 MB** in size, and you will receive a detailed analysis of it.\
+    \n\n• To get scan results - send me any a file up to **1024 MB** in size, and you will receive a detailed analysis of it.\
 \
     \n\n• With the help of a bot, you can analyse suspicious files to identify virus and other bad programs.\
 \
@@ -33,7 +33,7 @@ def strt(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 
     app.send_message(message.chat.id, START, reply_to_message_id=message.id, disable_web_page_preview=True,
     reply_markup=InlineKeyboardMarkup([[
-                                           InlineKeyboardButton( "📦 Source Code", url="https://github.com/bipinkrish/VirusTotal-Bot" )
+                                           InlineKeyboardButton( "📦 Source Code", url="https://github.com/satyam280610/VirusTotal" )
                                       ]]))
 
 
